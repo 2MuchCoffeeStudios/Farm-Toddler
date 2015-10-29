@@ -1,4 +1,5 @@
 /* jshint browser:true */
+// python -m SimpleHTTPServer
 // create BasicGame Class
 BasicGame = {
 
@@ -6,6 +7,7 @@ BasicGame = {
 
 // create Game function in BasicGame
 BasicGame.Game = function (game) {
+    
 };
 
 // set Game function prototype
@@ -51,20 +53,74 @@ BasicGame.Game.prototype = {
 
     preload: function () {
 
-        // Here we load the assets required for our preloader (in this case a 
-        // background and a loading bar)
-        this.load.image('logo', 'asset/phaser.png');
+        // Here we load the assets required for our preloader
+        this.load.image('background', 'asset/images/background.png');
+        this.load.spritesheet('chicken', 'asset/images/chicken_spritesheet.png');
+        this.load.spritesheet('horse', 'asset/images/horse_spritesheet.png');
+        this.load.spritesheet('pig', 'asset/images/pig_spritesheet.png');
+        this.load.spritesheet('sheep', 'asset/images/sheep_spritesheet.png');
+        this.load.image('arrow', 'asset/images/arrow.png');
+        
     },
 
     create: function () {
-        // Add logo to the center of the stage
-        this.logo = this.add.sprite(
-            this.world.centerX, // (centerX, centerY) is the center coordination
-            this.world.centerY,
-            'logo');
-        // Set the anchor to the center of the sprite
-        this.logo.anchor.setTo(0.5, 0.5);
+        
+        //background
+        this.background = this.add.sprite(0,0,'background');
+        this.background.scale.setTo(1,2);
+        
+        //left arrow
+        this.leftArrow = this.add.sprite(60, this.world.centerY, 'arrow');
+        this.leftArrow.anchor.setTo(0.5);
+        this.leftArrow.scale.x = -1;
+        this.leftArrow.customParams = {direction: -1};
+        
+        //left arrow user input
+        this.leftArrow.inputEnabled = true;
+        this.leftArrow.input.pixelPerfectClick = true;
+        this.leftArrow.events.onInputDown.add(this.switchAnimal, this);
 
+        //right arrow
+        this.rightArrow = this.add.sprite(420, this.world.centerY, 'arrow');
+        this.rightArrow.anchor.setTo(0.5);
+        this.rightArrow.customParams = {direction: 1};
+
+        //right arrow user input
+        this.rightArrow.inputEnabled = true;
+        this.rightArrow.input.pixelPerfectClick = true;
+        this.rightArrow.events.onInputDown.add(this.switchAnimal, this);
+        
+        var dataAnimals = [
+            {key:'chicken', text:'chicken'},
+            {key:'horse', text:'horse'},
+            {key:'pig', text:'pig'},
+            {key:'sheep', text:'sheep'},
+        ];
+        
+        this.animals = this.add.group();
+        
+        var self = this;
+        var animal;
+        
+        dataAnimals.forEach(function(element){
+            //create each animal and save it's properties
+            animal = self.animals.create(-1000, self.world.centerY, element.key, 0);
+            
+            //anchor point set to the center of the sprite
+            animal.anchor.setTo(0.5);
+            
+            //enable input so we can touch it
+            animal.inputEnabled = true;
+            animal.input.pixelPerfectClick = true;
+            animal.events.onInputDown.add(self.animateAnimal, self);
+            
+            
+        });
+        
+        this.currentAnimal = this.animals.next();
+        
+        this.currentAnimal.position.set(this.world.centerX,this.world.centerY);
+        
     },
 
     gameResized: function (width, height) {
@@ -75,6 +131,14 @@ BasicGame.Game.prototype = {
         // this callback is only really useful if you use a ScaleMode of RESIZE 
         // and place it inside your main game state.
 
+    },
+    
+    switchAnimal: function (){
+        console.log("this is madness!!");
+    },
+    
+    animateAnimal: function(){
+        console.log("animate animal");
     }
 
 };
