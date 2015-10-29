@@ -133,8 +133,18 @@ BasicGame.Game.prototype = {
 
     },
     
-    switchAnimal: function (){
-        console.log("this is madness!!");
+    switchAnimal: function (sprite, event){
+        var newAnimal, endX;
+        
+        if(sprite.customParams.direction >0){
+            newAnimal = this.animals.next();
+            endX = 640 + this.currentAnimal.width/2;
+        }
+        else{
+            newAnimal = this.animals.previous();
+            endX = -this.currentAnimal.width/2;
+            this.currentAnimal = newAnimal;
+        }
     },
     
     animateAnimal: function(){
